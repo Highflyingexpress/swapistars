@@ -55,13 +55,19 @@ export function Card({
     }
     setIsFavorite(!isFavorite);
   }
-
+  console.log(type);
   return (
     <Container>
       <div className="card-name">
         <Link to={`/${type}/${id}`}>
-          <span className="name">{name}</span> | Height: {height} | Mass: {mass}{" "}
-          | Hair: {hair_color}{" "}
+          {type === "characters" ? (
+            <>
+              <span className="name">{name}</span> | Height: {height} | Mass:{" "}
+              {mass} | Hair: {hair_color}{" "}
+            </>
+          ) : (
+            <span className="name">{name}</span>
+          )}
         </Link>
         <button type="button" onClick={() => handleFavourite()}>
           {!isFavorite ? <MdStarBorder size={32} /> : <MdStar size={32} />}

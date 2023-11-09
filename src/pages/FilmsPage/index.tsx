@@ -89,7 +89,7 @@ export default function FilmPage() {
           <div className="film-image">
             <img
               src={`https://starwars-visualguide.com/assets/img/films/${id}.jpg`}
-              alt={`Imagem de ${data?.title}`}
+              alt={`${data?.title}`}
             />
           </div>
         </CharacterContainer>
