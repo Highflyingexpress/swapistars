@@ -8,7 +8,7 @@ import { api } from "../../services/api";
 import { Container } from "./styles";
 import { Loading } from "../../components/Loading";
 import { getUrlId } from "../../utils/getUrlId";
-import { Film } from "../../types/Film.types";
+import { IFilm } from "../../types/Film.types";
 import { SelectButton } from "../../components/SelectButton";
 import { RootState } from "../../store";
 import useDebounce from "../../utils/useDebounce";
@@ -18,8 +18,8 @@ import {
 } from "../../store/slices/Film.slice";
 import { FILMS_LS } from "../../utils/constants/localStorageKeys";
 
-export default function Films() {
-  const [films, setFilms] = useState<Film[]>([]);
+const Films: React.FC = () => {
+  const [films, setFilms] = useState<IFilm[]>([]);
   const [inputSearch, setInputSearch] = useState<string>("");
   const [isFavouriteSelected, setIsFavouriteSelected] =
     useState<boolean>(false);
@@ -28,7 +28,7 @@ export default function Films() {
   const debouncedOnChange = useDebounce(inputSearch, 450);
   const dispatch = useDispatch();
 
-  const getData = useCallback(async () => {
+  const getData = useCallback(async (): Promise<void> => {
     try {
       const response = await api.get("films/");
       const returnedData = await response.data;
@@ -39,7 +39,7 @@ export default function Films() {
     }
   }, []);
 
-  const getFilteredData = useCallback(async () => {
+  const getFilteredData = useCallback(async (): Promise<void> => {
     try {
       const response = await api.get(`films/?search=${debouncedOnChange}`);
       const returnedData = await response.data;
@@ -88,7 +88,9 @@ export default function Films() {
           <InputSearch
             type="text"
             placeholder="Type something to find any film"
-            onChange={(event) => setInputSearch(event.target.value)}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setInputSearch(event.target.value)
+            }
           />
         )}
 
@@ -150,4 +152,6 @@ export default function Films() {
       )}
     </Container>
   );
-}
+};
+
+export default Films;

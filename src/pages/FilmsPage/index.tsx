@@ -1,29 +1,23 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FaCarAlt, FaSpaceShuttle, FaUserAlt } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
 import { Loading } from "../../components/Loading";
 import { api } from "../../services/api";
 import { CharacterContainer, Container } from "./styles";
-import { Film } from "../../types/Film.types";
+import { IFilm } from "../../types/Film.types";
 import { useFilms } from "../../hooks/useFilm";
 
-export default function FilmPage() {
-  const [data, setData] = useState<Film>();
-  const {
-    characters,
-    // planets,
-    // species,
-    // starships,
-    // vehicles,
-    isLoading: isLoadingFilms,
-  } = useFilms(data);
+const FilmPage: React.FC = () => {
+  const [data, setData] = useState<IFilm>();
+  const { characters, isLoading: isLoadingFilms } = useFilms(data);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { id } = useParams();
 
-  const getCharacterData = useCallback(async () => {
+  const getCharacterData = useCallback(async (): Promise<void> => {
     try {
       const response = await api.get(`/films/${id}`);
-      setData(response.data);
+      const res = response.data;
+      setData(res);
     } catch {
     } finally {
       setIsLoading(false);
@@ -96,4 +90,6 @@ export default function FilmPage() {
       )}
     </Container>
   );
-}
+};
+
+export default FilmPage;

@@ -1,5 +1,5 @@
 import React from "react";
 
-export function Loading() {
+export const Loading: React.FC = () => {
   return <div>{"LOADING..."}</div>;
-}
+};

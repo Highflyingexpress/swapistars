@@ -3,20 +3,21 @@ import { Link, useParams } from "react-router-dom";
 import { MdMovie } from "react-icons/md";
 import { useCharacter } from "../../hooks/useCharacter";
 import { api } from "../../services/api";
-import { Character } from "../../types/Character.type";
+import { ICharacter } from "../../types/Character.type";
 import { getUrlId } from "../../utils/getUrlId";
 import { CharacterContainer, Container } from "./styles";
 
 export default function CharacterPage() {
-  const [data, setData] = useState<Character>();
+  const [data, setData] = useState<ICharacter>();
   const { films, isLoading: isLoadingCharacter } = useCharacter(data);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { id } = useParams();
 
-  const getCharacterData = useCallback(async () => {
+  const getCharacterData = useCallback(async (): Promise<void> => {
     try {
       const response = await api.get(`/people/${id}`);
-      setData(response.data);
+      const res = await response.data;
+      setData(res);
     } catch {
     } finally {
       setIsLoading(false);

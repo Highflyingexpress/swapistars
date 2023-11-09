@@ -6,7 +6,7 @@ import { InputSearch } from "../../components/InputSearch";
 
 import { api } from "../../services/api";
 
-import { Character } from "../../types/Character.type";
+import { ICharacter } from "../../types/Character.type";
 import { Container } from "./styles";
 import { PaginationButton } from "../../components/PaginationButton";
 import { CompleteDataTypes } from "../../types/CompleteData.types";
@@ -19,23 +19,23 @@ import { setFavouriteCharacter } from "../../store/slices/Character.slice";
 import useDebounce from "../../utils/useDebounce";
 import { PEOPLE_LS } from "../../utils/constants/localStorageKeys";
 
-export default function Home() {
+const Home: React.FC = () => {
   const [data, setData] = useState<CompleteDataTypes>();
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const [characters, setCharacters] = useState<ICharacter[]>([]);
   const [inputSearch, setInputSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFavouriteSelected, setIsFavouriteSelected] =
     useState<boolean>(false);
 
-  const favouriteCharacters = useSelector(
+  const favouriteCharacters: ICharacterFavourite[] = useSelector(
     (state: RootState) => state.character
   );
 
   const debouncedOnChange = useDebounce(inputSearch, 450);
   const dispatch = useDispatch();
 
-  const getData = useCallback(async () => {
+  const getData = useCallback(async (): Promise<void> => {
     try {
       const response = await api.get(`people/?page=${page}`);
       const returnedData = await response.data;
@@ -47,7 +47,7 @@ export default function Home() {
     }
   }, [page]);
 
-  const getFilteredData = useCallback(async () => {
+  const getFilteredData = useCallback(async (): Promise<void> => {
     try {
       const response = await api.get(`people/?search=${debouncedOnChange}`);
       const returnedData = await response.data;
@@ -120,7 +120,9 @@ export default function Home() {
               type="text"
               value={inputSearch}
               placeholder="Type something to find somebody"
-              onChange={(event) => setInputSearch(event.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setInputSearch(event.target.value)
+              }
             />
           )}
 
@@ -247,4 +249,6 @@ export default function Home() {
       )}
     </Container>
   );
-}
+};
+
+export default Home;

@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Film } from '../types/Film.types';
+import { IFilm } from '../types/Film.types';
 
 type Character = {
   name: string;
   url: string;
 };
 
-export function useFilms(data: Film | undefined) {
+export function useFilms(data: IFilm | undefined) {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getCharacters = useCallback(async () => {
+  const getCharacters = useCallback(async (): Promise<void> => {
     try {
       data?.characters.forEach((character) => {
         fetch(character)
