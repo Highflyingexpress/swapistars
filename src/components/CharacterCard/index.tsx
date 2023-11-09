@@ -57,22 +57,28 @@ export function Card({
   }
   console.log(type);
   return (
-    <Container>
-      <div className="card-name">
+    <tr>
+      <td>
         <Link to={`/${type}/${id}`}>
-          {type === "characters" ? (
-            <>
-              <span className="name">{name}</span> | Height: {height} | Mass:{" "}
-              {mass} | Hair: {hair_color}{" "}
-            </>
-          ) : (
-            <span className="name">{name}</span>
-          )}
+          <span className="name">{name}</span>
         </Link>
+      </td>
+      {type === "characters" ? (
+        <>
+          <td>{height}</td>
+          <td>{mass}</td>
+          <td>{hair_color}</td>
+        </>
+      ) : (
+        <td>
+          <span className="name"> </span>
+        </td>
+      )}
+      <td>
         <button type="button" onClick={() => handleFavourite()}>
-          {!isFavorite ? <MdStarBorder size={32} /> : <MdStar size={32} />}
+          {!isFavorite ? <MdStarBorder size={30} /> : <MdStar size={30} />}
         </button>
-      </div>
-    </Container>
+      </td>
+    </tr>
   );
 }

@@ -193,48 +193,56 @@ export default function Home() {
         <div className="loading">
           <Loading />
         </div>
-      ) : !isFavouriteSelected ? (
-        <div className="cards">
-          {characters.map((character) => (
-            <Card
-              imageUrl={`https://starwars-visualguide.com/assets/img/characters/${getUrlId(
-                character.url
-              )}.jpg`}
-              name={character.name}
-              height={character.height}
-              key={character.name}
-              hair_color={character.hair_color}
-              mass={character.mass}
-              id={getUrlId(character.url)}
-              type="characters"
-              isFavourited={favouriteCharacters.some(
-                (favourite) => favourite.name === character.name
-              )}
-            />
-          ))}
-        </div>
       ) : (
-        <div className="cards">
-          {favouriteCharacters.length > 0 &&
-            favouriteCharacters.map((character: ICharacterFavourite) => (
-              <Card
-                imageUrl={`https://starwars-visualguide.com/assets/img/characters/${character.id}.jpg`}
-                name={character.name}
-                height={character.height}
-                hair_color={character.hair_color}
-                mass={character.mass}
-                key={character.name}
-                id={character.id}
-                type="characters"
-                isFavourited
-              />
-            ))}
-
-          {favouriteCharacters.length === 0 && (
-            <div className="no-favourites">
-              <span>No favourite items yet</span>
-            </div>
-          )}
+        <table className="maintable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Height</th>
+              <th>Hair Color</th>
+              <th>Mass</th>
+              <th>Favourite</th>
+            </tr>
+          </thead>
+          <tbody>
+            {!isFavouriteSelected
+              ? characters.map((character) => (
+                  <Card
+                    key={character.name}
+                    imageUrl={`https://starwars-visualguide.com/assets/img/characters/${getUrlId(
+                      character.url
+                    )}.jpg`}
+                    name={character.name}
+                    height={character.height}
+                    hair_color={character.hair_color}
+                    mass={character.mass}
+                    id={getUrlId(character.url)}
+                    type="characters"
+                    isFavourited={favouriteCharacters.some(
+                      (favourite) => favourite.name === character.name
+                    )}
+                  />
+                ))
+              : favouriteCharacters.length > 0 &&
+                favouriteCharacters.map((character: ICharacterFavourite) => (
+                  <Card
+                    imageUrl={`https://starwars-visualguide.com/assets/img/characters/${character.id}.jpg`}
+                    name={character.name}
+                    height={character.height}
+                    hair_color={character.hair_color}
+                    mass={character.mass}
+                    key={character.name}
+                    id={character.id}
+                    type="characters"
+                    isFavourited
+                  />
+                ))}
+          </tbody>
+        </table>
+      )}
+      {favouriteCharacters.length === 0 && isFavouriteSelected && (
+        <div className="no-favourites">
+          <span>No favourite items yet</span>
         </div>
       )}
     </Container>
