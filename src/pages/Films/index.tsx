@@ -87,9 +87,10 @@ const Films: React.FC = () => {
         {!isFavouriteSelected && (
           <InputSearch
             type="text"
+            value={inputSearch.trim()}
             placeholder="Type something to find any film"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setInputSearch(event.target.value)
+              setInputSearch(event.target.value.trim())
             }
           />
         )}

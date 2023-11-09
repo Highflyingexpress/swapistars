@@ -33,6 +33,7 @@ const Home: React.FC = () => {
   );
 
   const debouncedOnChange = useDebounce(inputSearch, 450);
+
   const dispatch = useDispatch();
 
   const getData = useCallback(async (): Promise<void> => {
@@ -118,10 +119,10 @@ const Home: React.FC = () => {
           {!isFavouriteSelected && (
             <InputSearch
               type="text"
-              value={inputSearch}
+              value={inputSearch.trim()}
               placeholder="Type something to find somebody"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setInputSearch(event.target.value)
+                setInputSearch(event.target.value.trim())
               }
             />
           )}
