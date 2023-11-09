@@ -1,6 +1,23 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+
+table {
+  margin-top: 1rem;
+  }
+
+  th {
+    color: orange;
+  }
+  .maintable {
+    border-collapse: separate;
+    border-spacing: 0.8rem;
+  }
+  .maintable th, .maintable td {
+    text-align: left;
+    padding: 0.2rem;
+  }
+
   .title {
     margin-bottom: 2rem;
     padding: 0 1rem;

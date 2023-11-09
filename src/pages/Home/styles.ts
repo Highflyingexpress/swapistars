@@ -11,7 +11,7 @@ export const Container = styled.div`
   }
   .maintable {
     border-collapse: separate;
-    border-spacing: 0.6rem;
+    border-spacing: 0.8rem;
   }
   .maintable th, .maintable td {
     text-align: left;

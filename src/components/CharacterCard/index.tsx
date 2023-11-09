@@ -10,10 +10,9 @@ import {
   removeFavoriteFilm,
   setFilmFavourite,
 } from "../../store/slices/Film.slice";
-import { Container } from "./styles";
 
 interface ICardProps {
-  imageUrl: string;
+  imageUrl?: string;
   name: string;
   height?: string;
   mass?: string;
@@ -55,7 +54,6 @@ export function Card({
     }
     setIsFavorite(!isFavorite);
   }
-  console.log(type);
   return (
     <tr>
       <td>
@@ -63,16 +61,12 @@ export function Card({
           <span className="name">{name}</span>
         </Link>
       </td>
-      {type === "characters" ? (
+      {type === "characters" && (
         <>
           <td>{height}</td>
           <td>{mass}</td>
           <td>{hair_color}</td>
         </>
-      ) : (
-        <td>
-          <span className="name"> </span>
-        </td>
       )}
       <td>
         <button type="button" onClick={() => handleFavourite()}>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card } from "../../components/CharacterCard";
 import { InputSearch } from "../../components/InputSearch";
@@ -18,6 +18,8 @@ import {
 } from "../../store/slices/Film.slice";
 import { FILMS_LS } from "../../utils/constants/localStorageKeys";
 
+const MemoCard = React.memo(Card);
+
 const Films: React.FC = () => {
   const [films, setFilms] = useState<IFilm[]>([]);
   const [inputSearch, setInputSearch] = useState<string>("");
@@ -27,40 +29,41 @@ const Films: React.FC = () => {
   const filmsFavourite = useSelector((state: RootState) => state.film);
   const debouncedOnChange = useDebounce(inputSearch, 450);
   const dispatch = useDispatch();
+  const firstUpdate = useRef(true);
 
-  const getData = useCallback(async (): Promise<void> => {
-    try {
-      const response = await api.get("films/");
-      const returnedData = await response.data;
-      setFilms(returnedData.results);
-    } catch {
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const getFilteredData = useCallback(async (): Promise<void> => {
-    try {
-      const response = await api.get(`films/?search=${debouncedOnChange}`);
-      const returnedData = await response.data;
-      setFilms(returnedData.results);
-    } catch {
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+    } else {
+      const fetchData = async (): Promise<void> => {
+        try {
+          setIsLoading(true);
+          const response = await api.get(`films/?search=${debouncedOnChange}`);
+          const returnedData = await response.data;
+          setFilms(returnedData.results);
+        } catch {
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchData();
     }
   }, [debouncedOnChange]);
 
   useEffect(() => {
-    setIsLoading(true);
-    getData();
-  }, [getData]);
+    const fetchData = async (): Promise<void> => {
+      try {
+        setIsLoading(true);
+        const response = await api.get(`films/`);
+        const returnedData = await response.data;
 
-  useEffect(() => {
-    setIsLoading(true);
-    getFilteredData();
-  }, [getFilteredData]);
-
-  useEffect(() => {
+        setFilms(returnedData.results);
+      } catch {
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
     if (!filmsFavourite.length) {
       const saved = localStorage.getItem(FILMS_LS);
       if (saved) {
@@ -116,37 +119,41 @@ const Films: React.FC = () => {
         <div className="loading">
           <Loading />
         </div>
-      ) : !isFavouriteSelected ? (
-        <div className="cards">
-          {films.map((film) => (
-            <Card
-              imageUrl={`https://starwars-visualguide.com/assets/img/films/${getUrlId(
-                film.url
-              )}.jpg`}
-              name={film.title}
-              key={film.title}
-              id={getUrlId(film.url)}
-              type="films"
-              isFavourited={filmsFavourite.some(
-                (data) => data.title === film.title
-              )}
-            />
-          ))}
-        </div>
-      ) : filmsFavourite.length > 0 ? (
-        <div className="cards">
-          {filmsFavourite.map((film) => (
-            <Card
-              imageUrl={`https://starwars-visualguide.com/assets/img/films/${film.id}.jpg`}
-              name={film.title}
-              key={film.title}
-              id={film.id}
-              type="films"
-              isFavourited
-            />
-          ))}
-        </div>
       ) : (
+        <table className="maintable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Favourite</th>
+            </tr>
+          </thead>
+          <tbody>
+            {!isFavouriteSelected
+              ? films.map((film) => (
+                  <MemoCard
+                    name={film.title}
+                    key={film.title}
+                    id={getUrlId(film.url)}
+                    type="films"
+                    isFavourited={filmsFavourite.some(
+                      (data) => data.title === film.title
+                    )}
+                  />
+                ))
+              : filmsFavourite.length > 0 &&
+                filmsFavourite.map((film: IFilmsFavourite) => (
+                  <MemoCard
+                    name={film.title}
+                    key={film.title}
+                    id={film.id}
+                    type="films"
+                    isFavourited
+                  />
+                ))}
+          </tbody>
+        </table>
+      )}
+      {filmsFavourite.length === 0 && isFavouriteSelected && (
         <div className="no-favourite">
           <span>No favourite films yet</span>
         </div>
