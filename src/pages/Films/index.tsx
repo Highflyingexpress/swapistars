@@ -17,6 +17,7 @@ import {
   setFilmFavourite,
 } from "../../store/slices/Film.slice";
 import { FILMS_LS } from "../../utils/constants/localStorageKeys";
+import { AxiosResponse } from "axios";
 
 const MemoCard = React.memo(Card);
 
@@ -29,7 +30,7 @@ const Films: React.FC = () => {
   const filmsFavourite = useSelector((state: RootState) => state.film);
   const debouncedOnChange = useDebounce(inputSearch, 450);
   const dispatch = useDispatch();
-  const firstUpdate = useRef(true);
+  const firstUpdate = useRef<boolean>(true);
 
   useEffect(() => {
     if (firstUpdate.current) {
@@ -38,9 +39,11 @@ const Films: React.FC = () => {
       const fetchData = async (): Promise<void> => {
         try {
           setIsLoading(true);
-          const response = await api.get(`films/?search=${debouncedOnChange}`);
-          const returnedData = await response.data;
-          setFilms(returnedData.results);
+          const response: AxiosResponse<{ results: IFilm[] }> = await api.get(
+            `films/?search=${debouncedOnChange}`
+          );
+          const returnedData: IFilm[] = response.data.results;
+          setFilms(returnedData);
         } catch {
         } finally {
           setIsLoading(false);
@@ -54,10 +57,12 @@ const Films: React.FC = () => {
     const fetchData = async (): Promise<void> => {
       try {
         setIsLoading(true);
-        const response = await api.get(`films/`);
-        const returnedData = await response.data;
+        const response: AxiosResponse<{ results: IFilm[] }> = await api.get(
+          `films/`
+        );
+        const returnedData: IFilm[] = response.data.results;
 
-        setFilms(returnedData.results);
+        setFilms(returnedData);
       } catch {
       } finally {
         setIsLoading(false);

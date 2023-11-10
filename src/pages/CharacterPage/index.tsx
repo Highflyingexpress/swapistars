@@ -6,6 +6,7 @@ import { api } from "../../services/api";
 import { ICharacter } from "../../types/Character.type";
 import { getUrlId } from "../../utils/getUrlId";
 import { CharacterContainer, Container } from "./styles";
+import { AxiosResponse } from "axios";
 
 export default function CharacterPage() {
   const [data, setData] = useState<ICharacter>();
@@ -15,8 +16,10 @@ export default function CharacterPage() {
 
   const getCharacterData = useCallback(async (): Promise<void> => {
     try {
-      const response = await api.get(`/people/${id}`);
-      const res = await response.data;
+      const response: AxiosResponse<ICharacter> = await api.get(
+        `/people/${id}`
+      );
+      const res: ICharacter = response.data;
       setData(res);
     } catch {
     } finally {

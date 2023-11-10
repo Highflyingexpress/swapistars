@@ -16,6 +16,7 @@ import { ICharacterFavourite } from "../../store/slices/Character.slice";
 import { setFavouriteCharacter } from "../../store/slices/Character.slice";
 import useDebounce from "../../utils/useDebounce";
 import { PEOPLE_LS } from "../../utils/constants/localStorageKeys";
+import { AxiosResponse } from "axios";
 
 const MemoCard = React.memo(Card);
 
@@ -26,7 +27,7 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFavouriteSelected, setIsFavouriteSelected] =
     useState<boolean>(false);
-  const firstUpdate = useRef(true);
+  const firstUpdate = useRef<boolean>(true);
 
   const favouriteCharacters: ICharacterFavourite[] = useSelector(
     (state: RootState) => state.character
@@ -43,9 +44,10 @@ const Home: React.FC = () => {
       const fetchData = async (): Promise<void> => {
         try {
           setIsLoading(true);
-          const response = await api.get(`people/?search=${debouncedOnChange}`);
-          const returnedData = await response.data;
-          setCharacters(returnedData.results);
+          const response: AxiosResponse<{ results: ICharacter[] }> =
+            await api.get(`people/?search=${debouncedOnChange}`);
+          const returnedData: ICharacter[] = response.data.results;
+          setCharacters(returnedData);
         } catch {
         } finally {
           setIsLoading(false);
@@ -59,10 +61,10 @@ const Home: React.FC = () => {
     const fetchData = async (): Promise<void> => {
       try {
         setIsLoading(true);
-        const response = await api.get(`people/`);
-        const returnedData = await response.data;
-
-        setCharacters(returnedData.results);
+        const response: AxiosResponse<{ results: ICharacter[] }> =
+          await api.get(`people/?search=${debouncedOnChange}`);
+        const returnedData: ICharacter[] = response.data.results;
+        setCharacters(returnedData);
       } catch {
       } finally {
         setIsLoading(false);

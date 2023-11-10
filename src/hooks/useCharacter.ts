@@ -10,13 +10,13 @@ export function useCharacter(data: ICharacter | undefined) {
   const [films, setFilms] = useState<Film[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const getFilms = useCallback(async (): Promise<void> => {
+  const getFilms = useCallback(async () => {
     try {
-      data?.films.forEach(async (film) => {
+      data?.films.forEach(async (film: string) => {
         const response = await fetch(film);
-        const filmData = await response.json();
+        const filmData: Film = await response.json();
         setFilms((prevState) => {
-          if (prevState.includes(filmData.title)) return prevState;
+          if (prevState.some((prevFilm) => prevFilm.title === filmData.title)) return prevState;
           return [
             ...prevState,
             {
