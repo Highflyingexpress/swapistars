@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card } from "../../components/CharacterCard";
 import { InputSearch } from "../../components/InputSearch";
@@ -24,10 +30,11 @@ const Home: React.FC = () => {
   const [data, setData] = useState<CompleteDataTypes>();
   const [characters, setCharacters] = useState<ICharacter[]>([]);
   const [inputSearch, setInputSearch] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFavouriteSelected, setIsFavouriteSelected] =
     useState<boolean>(false);
   const firstUpdate = useRef<boolean>(true);
+  const [isLoading, startTransition] = useTransition();
 
   const favouriteCharacters: ICharacterFavourite[] = useSelector(
     (state: RootState) => state.character
@@ -43,14 +50,16 @@ const Home: React.FC = () => {
     } else {
       const fetchData = async (): Promise<void> => {
         try {
-          setIsLoading(true);
+          // setIsLoading(true);
           const response: AxiosResponse<{ results: ICharacter[] }> =
             await api.get(`people/?search=${debouncedOnChange}`);
           const returnedData: ICharacter[] = response.data.results;
-          setCharacters(returnedData);
+          startTransition(() => {
+            setCharacters(returnedData);
+          });
         } catch {
         } finally {
-          setIsLoading(false);
+          // setIsLoading(false);
         }
       };
       fetchData();
@@ -60,14 +69,16 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const response: AxiosResponse<{ results: ICharacter[] }> =
           await api.get(`people/?search=${debouncedOnChange}`);
         const returnedData: ICharacter[] = response.data.results;
-        setCharacters(returnedData);
+        startTransition(() => {
+          setCharacters(returnedData);
+        });
       } catch {
       } finally {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     };
     fetchData();
@@ -129,11 +140,13 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="loading">
-          <Loading />
-        </div>
-      ) : (
+      <Suspense
+        fallback={
+          <div className="loading">
+            <Loading />
+          </div>
+        }
+      >
         <table className="maintable">
           <thead>
             <tr>
@@ -175,12 +188,13 @@ const Home: React.FC = () => {
                 ))}
           </tbody>
         </table>
-      )}
-      {favouriteCharacters.length === 0 && isFavouriteSelected && (
-        <div className="no-favourites">
-          <span>No favourite items yet</span>
-        </div>
-      )}
+
+        {favouriteCharacters.length === 0 && isFavouriteSelected && (
+          <div className="no-favourites">
+            <span>No favourite items yet</span>
+          </div>
+        )}
+      </Suspense>
     </Container>
   );
 };
